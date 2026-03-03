@@ -1,0 +1,14 @@
+[Unit]
+Description=Smart Mirror AI Camera Service
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+# Executabilul Python din mediul tău virtual urmat de script
+ExecStart=/home/pi/projects/SmartMirror/SmartMirrorEnv/bin/python3 /home/pi/projects/SmartMirror/start_up.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
