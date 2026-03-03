@@ -1,21 +1,22 @@
-from picamera import PiCamera
-from time import sleep
+from picam2 import Picamera2
+import time
 
 # Inițializăm camera
-camera = PiCamera()
+picam2 = Picamera2()
 
-# Opțional: Dacă imaginea este cu susul în jos, poți roti camera
-# camera.rotation = 180
+# Configurăm camera pentru previzualizare
+picam2.configure(picam2.create_preview_configuration())
 
-print("Pornesc camera...")
+print("Pornesc camera pe Trixie...")
 
-# Pornim previzualizarea pe ecran
-camera.start_preview()
+# Pornim camera și previzualizarea pe ecran
+picam2.start()
+picam2.start_preview()
 
-# Lăsăm previzualizarea activă timp de 10 secunde
-# În acest timp vei vedea live pe monitor ce vede camera
-sleep(10)
+# Lăsăm previzualizarea 10 secunde
+time.sleep(10)
 
-# Oprim previzualizarea
-camera.stop_preview()
+# Oprim camera
+picam2.stop_preview()
+picam2.stop()
 print("Camera a fost oprită.")
