@@ -4,7 +4,7 @@ import time
 picam2 = Picamera2()
 
 # Setăm configurația
-config = picam2.create_preview_configuration(main={"size": (800, 600)})
+config = picam2.create_preview_configuration(main={"size": (3000, 2000)})
 picam2.configure(config)
 
 print("Deschid fereastra video pe ecran...")
