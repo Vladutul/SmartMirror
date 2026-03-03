@@ -1,6 +1,6 @@
 import time
-from camera import CameraModule
-from model import FaceModel
+from camera_manager import CameraModule
+from model_manager import FaceModel
 import cv2 # Ai nevoie de OpenCV pentru a întoarce imaginea cum e în diagramă
 
 def run_mirror():

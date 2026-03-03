@@ -6,3 +6,5 @@ sudo systemctl enable smartmirror
 sudo systemctl start smartmirror
 
 pip install ultralytics
+
+pip install -r requirements.txt
