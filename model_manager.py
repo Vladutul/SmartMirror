@@ -1,20 +1,13 @@
 from ultralytics import YOLO
 
-class ModelYOLO:
-    def __init__(self, model_name="yolov8n.pt"):
-        print(f"[ModelYOLO] Inițializare model {model_name}...")
-        self.model = YOLO(model_name)
-        print("[ModelYOLO] Încărcare completă!")
+class FaceModel:
+    def __init__(self, model_path="yolov8n.pt"):
+        # This covers "Load YOLO Model" from your flowchart
+        print(f"[Model] Încărcare model {model_path} în memorie...")
+        self.model = YOLO(model_path)
+        print("[Model] Model încărcat.")
 
-    def analizeaza_cadru(self, frame):
-        """Trimite imaginea către model și returnează clasele detectate."""
-        # rulăm detecția fără a umple terminalul
-        rezultate = self.model(frame, verbose=False) 
-        obiecte_detectate = []
-        
-        for r in rezultate:
-            for c in r.boxes.cls:
-                nume_clasa = r.names[int(c)]
-                obiecte_detectate.append(nume_clasa)
-                
-        return obiecte_detectate
+    def detect(self, frame):
+        # This covers "YOLO Inference"
+        results = self.model(frame, verbose=False) # verbose=False ca să nu facă spam în terminal
+        return results

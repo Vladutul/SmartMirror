@@ -1,4 +1,8 @@
 DISPLAY=:0 python3 start_up.py 
+
 sudo nano /etc/systemd/system/smartmirror.service
+
 sudo systemctl enable smartmirror
 sudo systemctl start smartmirror
+
+pip install ultralytics

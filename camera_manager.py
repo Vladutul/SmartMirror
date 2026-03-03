@@ -1,30 +1,27 @@
 from picamera2 import Picamera2
 
-class CameraManager:
+class CameraModule:
     def __init__(self, width=640, height=480):
-        print(f"[CameraManager] Inițializare cameră ({width}x{height})...")
-        self.picam2 = Picamera2()
-        
-        # Configurăm formatul optim pentru procesare rapidă
-        config = self.picam2.create_preview_configuration(
+        # This covers "Init Camera"
+        print(f"[Camera] Inițializare cameră la {width}x{height}...")
+        self.cam = Picamera2()
+        config = self.cam.create_preview_configuration(
             main={"size": (width, height), "format": "RGB888"}
         )
-        self.picam2.configure(config)
-        self.is_running = False
+        self.cam.configure(config)
+        self.running = False
 
     def start(self):
-        print("[CameraManager] Pornire flux video...")
-        self.picam2.start()
-        self.is_running = True
+        self.cam.start()
+        self.running = True
+        print("[Camera] Cameră pornită.")
 
-    def opreste(self):
-        print("[CameraManager] Oprire sistem de captură...")
-        if self.is_running:
-            self.picam2.stop()
-            self.is_running = False
-
-    def ia_cadru(self):
-        """Returnează un array (matrice) din stream-ul curent."""
-        if not self.is_running:
+    def get_frame(self):
+        # This covers "Capture Frame"
+        if not self.running:
             return None
-        return self.picam2.capture_array("main")
+        return self.cam.capture_array("main")
+
+    def stop(self):
+        self.cam.stop()
+        self.running = False
