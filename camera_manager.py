@@ -1,27 +1,23 @@
+import cv2
 from picamera2 import Picamera2
 
-class CameraModule:
+class CameraManager:
     def __init__(self, width=640, height=480):
-        # This covers "Init Camera"
-        print(f"[Camera] Inițializare cameră la {width}x{height}...")
-        self.cam = Picamera2()
-        config = self.cam.create_preview_configuration(
+        print(f"[Camera] Inițializare la {width}x{height}...")
+        self.picam2 = Picamera2()
+        config = self.picam2.create_preview_configuration(
             main={"size": (width, height), "format": "RGB888"}
         )
-        self.cam.configure(config)
-        self.running = False
+        self.picam2.configure(config)
 
     def start(self):
-        self.cam.start()
-        self.running = True
-        print("[Camera] Cameră pornită.")
-
-    def get_frame(self):
-        # This covers "Capture Frame"
-        if not self.running:
-            return None
-        return self.cam.capture_array("main")
+        self.picam2.start()
 
     def stop(self):
-        self.cam.stop()
-        self.running = False
+        self.picam2.stop()
+
+    def get_frame_bgr_flipped(self):
+        """Returnează un cadru gata de afișat cu OpenCV (BGR și inversat)."""
+        cadru_rgb = self.picam2.capture_array("main")
+        cadru_bgr = cv2.cvtColor(cadru_rgb, cv2.COLOR_RGB2BGR)
+        return cv2.flip(cadru_bgr, 1)
