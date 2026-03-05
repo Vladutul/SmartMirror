@@ -1,29 +1,33 @@
 import threading
 import queue
+import numpy as np
+from typing import List, Dict, Any
 from ultralytics import YOLO
 
-class YoloWorker:
-    def __init__(self, model_path="yolov8n.pt"):
+# 1. Nume bazat pe "ce face" (domeniu), nu pe "cum face" (tehnic)
+class YoloObjectDetector:
+    def __init__(self, model_path: str = "yolov8n.pt"):
         self.model_path = model_path
         self.frame_queue = queue.Queue(maxsize=1)
-        self.current_detections = []
+        self.current_detections: List[Dict[str, Any]] = []
         self.is_running = False
-        self.thread = None
+        self.thread: threading.Thread | None = None
 
-    def start(self):
-        """Pornește thread-ul pentru analiză în fundal."""
+    # 3. Type hints pentru o curățenie impecabilă
+    def start(self) -> None:
+        """Pornește analiza în fundal, ascunzând complexitatea de thread-uri."""
         self.is_running = True
-        self.thread = threading.Thread(target=self._worker_loop)
+        self.thread = threading.Thread(target=self._worker_loop, daemon=True) # daemon=True ajută la închiderea curată
         self.thread.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """Oprește thread-ul curat."""
         self.is_running = False
         if self.thread is not None:
             self.thread.join()
 
-    def _worker_loop(self):
-        """Această funcție rulează izolat pe thread-ul secundar."""
+    def _worker_loop(self) -> None:
+        """Această funcție rămâne privată (are '_' în față) pentru că aparține doar de implementarea curentă."""
         print("[YOLO] Încarc modelul pe nucleele hardware...")
         model = YOLO(self.model_path)
         print("[YOLO] Pregătit pentru analiză!")
@@ -48,11 +52,14 @@ class YoloWorker:
             except queue.Empty:
                 continue
 
-    def push_frame(self, frame):
-        """Primește un cadru de la programul principal (dacă e liber)."""
-        if self.frame_queue.empty():
-            self.frame_queue.put(frame)
+    def push_frame(self, frame: np.ndarray) -> None:
+        """Primește un cadru. Dacă modelul este ocupat, cadrul este ignorat pentru a evita latența."""
+        # 2. Modul Pythonic (și sigur pe thread-uri) de a gestiona o coadă de mărime 1
+        try:
+            self.frame_queue.put_nowait(frame)
+        except queue.Full:
+            pass # Coada e plină, modelul e ocupat, ignorăm cadrul vechi
 
-    def get_detections(self):
+    def get_detections(self) -> List[Dict[str, Any]]:
         """Returnează ce a găsit ultima dată pe ecran."""
         return self.current_detections
