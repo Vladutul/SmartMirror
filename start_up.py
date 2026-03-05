@@ -72,15 +72,15 @@ class SmartMirrorApp:
 
 # 3. Asamblarea aplicației se face la exterior (Compozitie)
 if __name__ == "__main__":
-    from camera_manager import CameraManager # Implementarea concretă
-    from model_manager import YoloWorker     # Implementarea concretă
+    from camera_manager import PiCamera # Implementarea concretă
+    from model_manager import YoloObjectDetector     # Implementarea concretă
     
     # Aici poți schimba ușor cu: 
     # camera = IpCameraManager("192.168.1.100")
     # model = MediaPipeWorker()
     
-    my_camera = CameraManager()
-    my_model = YoloWorker()
+    my_camera = PiCamera()
+    my_model = YoloObjectDetector()
     
     app = SmartMirrorApp(camera=my_camera, model=my_model)
     app.run()
