@@ -22,10 +22,13 @@ class PiCamera:
     # 2. Nume standardizat. Orice cameră vom adăuga pe viitor va avea metoda "get_frame"
     def get_frame(self) -> np.ndarray:
         """Returnează un cadru gata de afișat (convertit în BGR și efect de oglindă)."""
-        cadru_rgb = self.picam2.capture_array("main")
+        rgb_frame = self.picam2.capture_array("main")
         
         # Procesarea internă (specifică acestei camere) rămâne ascunsă aici
-        cadru_bgr = cv2.cvtColor(cadru_rgb, cv2.COLOR_RGB2BGR)
-        cadru_inversat = cv2.flip(cadru_bgr, 1)
+        bgr_frame = cv2.cvtColor(rgb_frame, cv2.COLOR_RGB2BGR)
+        inverted_frame = self.mirror_frame(bgr_frame)
         
-        return cadru_inversat
+        return inverted_frame
+    
+    def mirror_frame(self, frame):
+        return cv2.flip(frame, 1)

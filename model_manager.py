@@ -10,19 +10,19 @@ class YoloObjectDetector:
         self.model_path = model_path
         self.frame_queue = queue.Queue(maxsize=1)
         self.current_detections: List[Dict[str, Any]] = []
-        self.is_running = False
+        self.running_state = False
         self.thread: threading.Thread | None = None
 
     # 3. Type hints pentru o curățenie impecabilă
     def start(self) -> None:
         """Pornește analiza în fundal, ascunzând complexitatea de thread-uri."""
-        self.is_running = True
+        self.change_running_state(True)
         self.thread = threading.Thread(target=self._worker_loop, daemon=True) # daemon=True ajută la închiderea curată
         self.thread.start()
 
     def stop(self) -> None:
         """Oprește thread-ul curat."""
-        self.is_running = False
+        self.change_running_state(False)
         if self.thread is not None:
             self.thread.join()
 
@@ -32,9 +32,9 @@ class YoloObjectDetector:
         model = YOLO(self.model_path)
         print("[YOLO] Pregătit pentru analiză!")
 
-        while self.is_running:
+        while self.running_state:
             try:
-                # Așteptăm o imagine nouă (timeout 1 sec ca să putem verifica if is_running)
+                # Așteptăm o imagine nouă (timeout 1 sec ca să putem verifica if running_state)
                 cadru = self.frame_queue.get(timeout=1)
                 rezultate = model(cadru, verbose=False)
 
@@ -63,3 +63,6 @@ class YoloObjectDetector:
     def get_detections(self) -> List[Dict[str, Any]]:
         """Returnează ce a găsit ultima dată pe ecran."""
         return self.current_detections
+    
+    def change_running_state(self, state: bool):
+        self.running_state = state

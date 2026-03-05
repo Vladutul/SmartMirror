@@ -22,7 +22,7 @@ class SmartMirrorApp:
     def __init__(self, camera: ICamera, model: IModelWorker):
         self.camera = camera
         self.model = model
-        self.is_running = False
+        self.running_state = False
 
     def run(self):
         print("--- START: Pregătire Unelte ---")
@@ -33,7 +33,7 @@ class SmartMirrorApp:
         print("--- RUNTIME: Sistemul rulează (Apasă ESC pentru ieșire) ---")
 
         try:
-            while self.is_running:
+            while self.running_state:
                 cadru = self.camera.get_frame()
                 
                 if cadru is not None:
@@ -60,13 +60,16 @@ class SmartMirrorApp:
         self.model.start()
         self.camera.start()
 
+    def stop_components(self):
+        self.model.stop()
+        self.camera.stop()
+
     def set_running_state(self, state: bool):
-        self.is_running = state
+        self.running_state = state
 
     def cleanup(self):
         print("Încep oprirea componentelor...")
-        self.camera.stop()
-        self.model.stop()
+        self.stop_components()
         cv2.destroyAllWindows()
         print("Sistem oprit cu succes.")
 
